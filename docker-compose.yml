@@ -1,0 +1,80 @@
+services:
+  # Banco de dados PostgreSQL
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: case-task-postgres
+    environment:
+      POSTGRES_DB: case_task_manager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432" # Development: expose Postgres on host 5433 to avoid local 5432 conflicts
+    networks:
+      - case-task-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Backend (Nest.js)
+  api:
+    build:
+      context: ./case-task-manager-api
+      dockerfile: Dockerfile
+    container_name: case-task-api
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres123
+      DB_NAME: case_task_manager
+      JWT_SECRET: 80f657bfafc38a537ba03ca85bc2d247955a632b29f799d0ebe6bfd09199825f4803ab92c2fdcd49ca92e4ebb19390bab0eef21f20fa72855b84f6ae5838911b
+      JWT_EXPIRES_IN: 7d
+      API_PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - case-task-network
+    volumes:
+      - ./case-task-manager-api:/app
+      - /app/node_modules
+    command: npm run start:dev
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./case-task-manager-front
+      dockerfile: Dockerfile
+    container_name: case-task-frontend
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      API_URL: http://api:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - case-task-network
+    volumes:
+      - ./case-task-manager-front:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  case-task-network:
+    driver: bridge

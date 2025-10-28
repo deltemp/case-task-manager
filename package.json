@@ -1,0 +1,66 @@
+{
+  "name": "case-task-manager",
+  "version": "1.0.0",
+  "description": "Full-stack task management application with Next.js and Nest.js",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd case-task-manager-api && npm install && cd ../case-task-manager-front && npm install",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
+    "dev:api": "cd case-task-manager-api && npm run start:dev",
+    "dev:frontend": "cd case-task-manager-front && npm run dev",
+    "build": "npm run build:api && npm run build:frontend",
+    "build:api": "cd case-task-manager-api && npm run build",
+    "build:frontend": "cd case-task-manager-front && npm run build",
+    "start": "concurrently \"npm run start:api\" \"npm run start:frontend\"",
+    "start:api": "cd case-task-manager-api && npm run start:prod",
+    "start:frontend": "cd case-task-manager-front && npm run start",
+    "test": "npm run test:api && npm run test:frontend",
+    "test:api": "cd case-task-manager-api && npm run test",
+    "test:frontend": "cd case-task-manager-front && npm run test",
+    "lint": "npm run lint:api && npm run lint:frontend",
+    "lint:api": "cd case-task-manager-api && npm run lint",
+    "lint:frontend": "cd case-task-manager-front && npm run lint",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up",
+    "docker:up:build": "docker-compose up --build",
+    "docker:dev": "docker-compose up --build",
+    "docker:dev:logs": "docker-compose logs -f",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:prod:up": "docker-compose -f docker-compose.prod.yml up -d",
+    "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
+    "docker:prod:build": "docker-compose -f docker-compose.prod.yml build",
+    "docker:clean": "docker system prune -f && docker volume prune -f",
+    "migration:generate": "cd case-task-manager-api && npm run migration:generate",
+    "migration:run": "cd case-task-manager-api && npm run migration:run",
+    "migration:revert": "cd case-task-manager-api && npm run migration:revert",
+    "deploy:dev": "./scripts/deploy-dev.sh",
+    "deploy:prod": "./scripts/deploy-prod.sh",
+    "terraform:init": "cd terraform && terraform init",
+    "terraform:plan": "cd terraform && terraform plan",
+    "terraform:apply": "cd terraform && terraform apply",
+    "terraform:destroy": "cd terraform && terraform destroy"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "case-task-manager-api",
+    "case-task-manager-front"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "task-manager",
+    "nextjs",
+    "nestjs",
+    "postgresql",
+    "docker",
+    "terraform",
+    "aws"
+  ],
+  "author": "Case Task Manager Team",
+  "license": "MIT"
+}
