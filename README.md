@@ -1,4 +1,4 @@
-# Case Task Manager [![codecov](https://codecov.io/gh/deltemp/case-task-manager/graph/badge.svg?token=YOUR_TOKEN_HERE)](https://codecov.io/gh/deltemp/case-task-manager)
+# Case Task Manager
 
 Um sistema completo de gerenciamento de tarefas construído com Next.js, Nest.js e PostgreSQL, com infraestrutura completa para desenvolvimento local e deploy em produção na AWS.
 
